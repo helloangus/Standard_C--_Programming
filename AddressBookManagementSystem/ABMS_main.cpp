@@ -13,6 +13,8 @@ int main(){
 
     AddressBooks* addressBooks = initAddressBooks();
     run(addressBooks);
+    delete addressBooks;
+    addressBooks = NULL;
     return 0;
 }
 
