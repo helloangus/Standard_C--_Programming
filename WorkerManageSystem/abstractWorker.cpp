@@ -2,20 +2,20 @@
 
 AbstractWorker :: AbstractWorker(int id, string name, int depId)
 {
-    m_Id = id;
-    m_Name = name;
-    m_DepId = depId;
+    this->m_Id = id;
+    this->m_Name = name;
+    this->m_DepId = depId;
 }
 
 int AbstractWorker :: getId()
 {
-    return m_Id;
+    return this->m_Id;
 }
 string AbstractWorker :: getName()
 {
-    return m_Name;
+    return this->m_Name;
 }
 int AbstractWorker :: getDepId()
 {
-    return m_DepId;
+    return this->m_DepId;
 }
