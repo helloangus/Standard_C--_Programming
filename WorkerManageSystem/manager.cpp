@@ -7,8 +7,6 @@ Manager :: Manager(int id, string name, int depId) : AbstractWorker(id, name, de
         throw "Wrong Department ID!";
         return;
     }
-    
-    cout << "子类调用父类构造函数" << endl;
 }
 
 void Manager :: showInfo()

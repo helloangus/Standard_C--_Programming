@@ -7,8 +7,6 @@ Boss :: Boss(int id, string name, int depId) : AbstractWorker(id, name, depId)
         throw "Wrong Department ID!";
         return;
     }
-    
-    cout << "子类调用父类构造函数" << endl;
 }
 
 void Boss :: showInfo()

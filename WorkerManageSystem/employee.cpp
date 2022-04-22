@@ -7,8 +7,6 @@ Employee :: Employee(int id, string name, int depId) : AbstractWorker(id, name, 
         throw "Wrong Department ID!";
         return;
     }
-    
-    cout << "子类调用父类构造函数" << endl;
 }
 
 void Employee :: showInfo()

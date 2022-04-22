@@ -10,7 +10,5 @@ int main()
     WorkerManage wm;
     wm.showMenu();
 
-    // test();
-
     return 0;
 }

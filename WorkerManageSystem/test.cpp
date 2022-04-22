@@ -2,6 +2,7 @@
 #include "manager.h"
 #include "boss.h"
 
+// 三种职工类的创建测试
 int test()
 {
     try
