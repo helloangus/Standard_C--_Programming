@@ -121,12 +121,19 @@ int WorkerManage :: getEmpNum()
 void WorkerManage :: showEmp()
 {
     cout << endl;
-    cout << "现有全部职工如下：" << endl;
-    EmpNode *p = this->m_EmpListHead;
-    while (p->next != NULL)
+    if(this->m_FileIsEmpty)
     {
-        p->next->m_Emp->showInfo();
-        p = p->next;
+        cout << "记录为空" << endl;
+    }
+    else
+    {
+        cout << "现有全部职工如下：" << endl;
+        EmpNode *p = this->m_EmpListHead;
+        while (p->next != NULL)
+        {
+            p->next->m_Emp->showInfo();
+            p = p->next;
+        }
     }
 }
 
@@ -376,28 +383,35 @@ int WorkerManage :: empFind(string name, EmpNode **S_pre)
 void WorkerManage :: deleteEmp()
 {
     cout << endl;
-    cout << "请输入需要删除的职工编号：" << endl;
-    int id;
-    cin >> id;
-    // 创建节点二级指针
-    EmpNode *pre = NULL;
-    EmpNode **S_pre = &pre;
-    // 调用可以返回节点的empFind函数
-    // 若找到，则删除*pre->next节点
-    if( empFind(id, S_pre) == VALID_ID)
+    if(this->m_FileIsEmpty)
     {
-        EmpNode *q = pre->next;
-        pre->next = q->next;
-        delete q;
-        this->save();
-        cout << "删除成功" << endl;
-        return;
+        cout << "记录为空" << endl;
     }
-    // 否则给出提示
     else
     {
-        cout << "输入职工编号不合法，或对应职工不存在" << endl;
-        return;
+        cout << "请输入需要删除的职工编号：" << endl;
+        int id;
+        cin >> id;
+        // 创建节点二级指针
+        EmpNode *pre = NULL;
+        EmpNode **S_pre = &pre;
+        // 调用可以返回节点的empFind函数
+        // 若找到，则删除*pre->next节点
+        if( empFind(id, S_pre) == VALID_ID)
+        {
+            EmpNode *q = pre->next;
+            pre->next = q->next;
+            delete q;
+            this->save();
+            cout << "删除成功" << endl;
+            return;
+        }
+        // 否则给出提示
+        else
+        {
+            cout << "输入职工编号不合法，或对应职工不存在" << endl;
+            return;
+        }
     }
 }
 
@@ -405,35 +419,42 @@ void WorkerManage :: deleteEmp()
 void WorkerManage :: modEmp()
 {
     cout << endl;
-    // 提示输入要修改的职工id
-    cout << "请输入需要修改的职工编号： " << endl;
-    // 接收职工id
-    int id;
-    cin >> id;
-    // 创建一级指针
-    EmpNode *pre = NULL;
-    // 创建二级指针并指向对应一级指针
-    EmpNode **S_pre = &pre;
-    // 调用通过职工id返回对应职工节点的前一个节点的empFind函数
-    if(empFind(id, S_pre) == VALID_ID)
+    if(this->m_FileIsEmpty)
     {
-        // 把节点原来的信息释放掉
-        delete pre->next->m_Emp;
-        pre->next->m_Emp = NULL;
-        // 传入对应的职工节点，调用modEmpNode函数修改节点信息
-        cout << "请输入新的职工信息：" << endl;
-        this->modEmpNode(pre->next);
-        // 提示修改成功
-        cout << "修改成功" << endl;
-        // 保存到文件
-        this->save();
-        return;
+        cout << "记录为空" << endl;
     }
-    // 若没找到，给出提示
     else
     {
-        cout << "输入职工编号不合法，或对应职工不存在" << endl;
-        return;
+        // 提示输入要修改的职工id
+        cout << "请输入需要修改的职工编号： " << endl;
+        // 接收职工id
+        int id;
+        cin >> id;
+        // 创建一级指针
+        EmpNode *pre = NULL;
+        // 创建二级指针并指向对应一级指针
+        EmpNode **S_pre = &pre;
+        // 调用通过职工id返回对应职工节点的前一个节点的empFind函数
+        if(empFind(id, S_pre) == VALID_ID)
+        {
+            // 把节点原来的信息释放掉
+            delete pre->next->m_Emp;
+            pre->next->m_Emp = NULL;
+            // 传入对应的职工节点，调用modEmpNode函数修改节点信息
+            cout << "请输入新的职工信息：" << endl;
+            this->modEmpNode(pre->next);
+            // 提示修改成功
+            cout << "修改成功" << endl;
+            // 保存到文件
+            this->save();
+            return;
+        }
+        // 若没找到，给出提示
+        else
+        {
+            cout << "输入职工编号不合法，或对应职工不存在" << endl;
+            return;
+        }
     }
 }
 
@@ -441,70 +462,110 @@ void WorkerManage :: modEmp()
 void WorkerManage :: findEmp()
 {
     cout << endl;
-    // 提示通过职工编号查找还是通过姓名查找
-    cout << "请选择查找方式：" << endl;
-    cout << "1、通过职工编号查找" << endl;
-    cout << "2、通过职工姓名查找" << endl;
-    // 创建对应一级、二级指针
-    EmpNode *pre = NULL;
-    EmpNode **S_pre = &pre;
-    // 若通过编号查找
-    int choice;
-    cin >> choice;
-    if(choice == 1)
+    if(this->m_FileIsEmpty)
     {
-        cout << "请输入职工编号：" << endl;
-        int id;
-        cin >> id;
-        // 调用对应重载empFind
-        if(empFind(id, S_pre) == VALID_ID)
-        {
-            // 显示职工信息
-            pre->next->m_Emp->showInfo();
-            return;
-        }
-        else
-        {
-            cout << "输入职工编号非法，或对应职工不存在" << endl;
-            return;
-        }
-        
-    }
-    // 若通过姓名查找
-    else if(choice == 2)
-    {
-        cout << "请输入职工姓名：" << endl;
-        string name;
-        cin >> name;
-        // 调用对应重载empFind
-        if(empFind(name, S_pre) == VALID_ID)
-        {
-            // 显示职工信息
-            pre->next->m_Emp->showInfo();
-            return;
-        }
-        else
-        {
-            cout << "对应职工不存在" << endl;
-            return;
-        }
-        return;
+        cout << "记录为空" << endl;
     }
     else
     {
-        cout << "查找方式错误" << endl;
-        return;
+        // 提示通过职工编号查找还是通过姓名查找
+        cout << "请选择查找方式：" << endl;
+        cout << "1、通过职工编号查找" << endl;
+        cout << "2、通过职工姓名查找" << endl;
+        // 创建对应一级、二级指针
+        EmpNode *pre = NULL;
+        EmpNode **S_pre = &pre;
+        // 若通过编号查找
+        int choice;
+        cin >> choice;
+        if(choice == 1)
+        {
+            cout << "请输入职工编号：" << endl;
+            int id;
+            cin >> id;
+            // 调用对应重载empFind
+            if(empFind(id, S_pre) == VALID_ID)
+            {
+                // 显示职工信息
+                pre->next->m_Emp->showInfo();
+                return;
+            }
+            else
+            {
+                cout << "输入职工编号非法，或对应职工不存在" << endl;
+                return;
+            }
+            
+        }
+        // 若通过姓名查找
+        else if(choice == 2)
+        {
+            cout << "请输入职工姓名：" << endl;
+            string name;
+            cin >> name;
+            // 调用对应重载empFind
+            if(empFind(name, S_pre) == VALID_ID)
+            {
+                // 显示职工信息
+                pre->next->m_Emp->showInfo();
+                return;
+            }
+            else
+            {
+                cout << "对应职工不存在" << endl;
+                return;
+            }
+            return;
+        }
+        else
+        {
+            cout << "查找方式错误" << endl;
+            return;
+        }
     }
 }
 
 void WorkerManage :: sortEmp()
 {
     cout << endl;
-    // TODO
+    if(this->m_FileIsEmpty)
+    {
+        cout << "记录为空" << endl;
+    }
+    else
+    {
+        // TODO
+    }
 }
 
 void WorkerManage :: cleanEmp()
 {
     cout << endl;
-    // TODO
+    // 提示确认是否清空
+    cout << "是否确认清空全部记录？" << endl;
+    cout << "1、确认清空" << endl;
+    cout << "2、取消操作" << endl;
+    int choice;
+    cin >> choice;
+    // 若确认
+    if(choice == 1)
+    {
+        // 以覆盖方式重新创建文件并关闭
+        ofstream ofs;
+        ofs.open(FILE_NAME, ios::trunc);
+        ofs.close();
+        // 释放链表空间
+        this->release();
+        // m_FileIsEmpty为真
+        this->m_FileIsEmpty = true;
+        // 给出成功提示
+        cout << "清空成功" << endl;
+        return;
+    }
+    else
+    {
+        // 否则给出提示
+        cout << "取消操作" << endl;
+        return;
+    }
 }
