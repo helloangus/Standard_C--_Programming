@@ -88,15 +88,19 @@ void WorkerManage :: showMenu()
                 break;
             // 4、修改职工信息
             case 4:
+                this->modEmp();
                 break;
             // 5、查找职工信息
             case 5:
+                this->findEmp();
                 break;
             // 6、按编号排序
             case 6:
+                this->sortEmp();
                 break;
             // 7、清空所有职工信息
             case 7:
+                this->cleanEmp();
                 break;
             
             default:
@@ -116,20 +120,89 @@ int WorkerManage :: getEmpNum()
 
 void WorkerManage :: showEmp()
 {
+    cout << endl;
     cout << "现有全部职工如下：" << endl;
     EmpNode *p = this->m_EmpListHead;
     while (p->next != NULL)
     {
-        cout << "职工编号：" << p->next->m_Emp->getId() << "\t"
-        << "职工姓名：" << p->next->m_Emp->getName() << "\t"
-        << "职工岗位：" << p->next->m_Emp->getDepName() << endl;
+        p->next->m_Emp->showInfo();
         p = p->next;
     }
 }
 
 
+void WorkerManage :: modEmpNode(EmpNode * p)
+{
+    int id;
+    string name;
+    int depId;
+    
+    while (true)
+    {
+        cout << "请输入职工编号：" << endl;
+        cin >> id;
+        if (this->empFind(id) == INVALID_ID)
+        {
+            cout << "职工编号不合法，请重新输入" << endl;
+            // 考虑cin的内容若为字符型，无法存入id，则需要重置缓冲区
+            cin.clear();
+            cin.ignore();
+        }
+        else if(this->empFind(id) == VALID_ID)
+        {
+            cout << "职工编号已存在，请重新输入" << endl;
+            cin.clear();
+            cin.ignore();
+        }
+        else if(this->empFind(id) == EMPTY_ID)
+        {
+            break;
+        }
+    }
+
+    cout << "请输入职工姓名：" << endl;
+    cin >> name;
+
+    while (true)
+    {
+        cout << "请输入职工岗位：" << endl;
+        cout << "1、普通员工" << endl;
+        cout << "2、经理" << endl;
+        cout << "3、老板" << endl;
+
+        cin >> depId;
+        if (depId == 1 || depId == 2 || depId == 3)
+        {
+            break;
+        }
+        else
+        {
+            cout << "输入岗位不合法，请重新输入" <<endl;
+            cin.clear();
+            cin.ignore();
+        }
+    }
+    
+    switch (depId)
+    {
+    case 1:
+        p->m_Emp = new Employee(id, name, depId);
+        break;
+    case 2:
+        p->m_Emp = new Manager(id, name, depId);
+        break;
+    case 3:
+        p->m_Emp = new Boss(id, name, depId);
+        break;
+
+    default:
+        break;
+    }
+}
+
 void WorkerManage :: addEmp()
 {
+    cout << endl;
     cout << "输入需要增加的职工数量：" << endl;
     int addNum = 0;
     cin >> addNum;
@@ -141,73 +214,9 @@ void WorkerManage :: addEmp()
     {
         for (size_t i = 0; i < addNum; i++)
         {
-            int id;
-            string name;
-            int depId;
-            
-            while (true)
-            {
-                cout << "请输入第 " << i+1 << " 个新职工编号：" << endl;
-                cin >> id;
-                if (this->empFind(id) == INVALID_ID)
-                {
-                    cout << "职工编号不合法，请重新输入" << endl;
-                    // 考虑cin的内容若为字符型，无法存入id，则需要重置缓冲区
-                    cin.clear();
-                    cin.ignore();
-                }
-                else if(this->empFind(id) == VALID_ID)
-                {
-                    cout << "职工编号已存在，请重新输入" << endl;
-                    cin.clear();
-                    cin.ignore();
-                }
-                else if(this->empFind(id) == EMPTY_ID)
-                {
-                    break;
-                }
-            }
-
-            cout << "请输入第 " << i+1 << " 个新职工姓名：" << endl;
-            cin >> name;
-
-            while (true)
-            {
-                cout << "请输入第 " << i+1 << " 个新职工岗位：" << endl;
-                cout << "1、普通员工" << endl;
-                cout << "2、经理" << endl;
-                cout << "3、老板" << endl;
-
-                cin >> depId;
-                if (depId == 1 || depId == 2 || depId == 3)
-                {
-                    break;
-                }
-                else
-                {
-                    cout << "输入岗位不合法，请重新输入" <<endl;
-                    cin.clear();
-                    cin.ignore();
-                }
-            }
-            
-            EmpNode *p = new EmpNode;
-            switch (depId)
-            {
-            case 1:
-                p->m_Emp = new Employee(id, name, depId);
-                break;
-            case 2:
-                p->m_Emp = new Manager(id, name, depId);
-                break;
-            case 3:
-                p->m_Emp = new Boss(id, name, depId);
-                break;
-
-            default:
-                break;
-            }
-            
+            cout << "录入第 " << i+1 << " 个新职工信息" << endl;
+            EmpNode* p = new EmpNode;
+            this->modEmpNode(p);
             // 用头插法接入链表
             p->next = this->m_EmpListHead->next;
             this->m_EmpListHead->next = p;
@@ -311,7 +320,7 @@ int WorkerManage :: empFind(int id)
         EmpNode *p = this->m_EmpListHead;
         while (p->next != NULL)
         {
-            if(p->next->m_Emp->getId() == id)
+            if(p->next->m_Emp != NULL && p->next->m_Emp->getId() == id)
             {
                 return VALID_ID;
             }
@@ -323,11 +332,11 @@ int WorkerManage :: empFind(int id)
 
 
 // 重载根据ID返回职工节点的前一个节点
-int WorkerManage :: empFind(int id, EmpNode **pre)
+int WorkerManage :: empFind(int id, EmpNode **S_pre)
 {
     if(id <= 0)
     {
-        *pre = NULL;
+        *S_pre = NULL;
         return INVALID_ID;
     }
     else
@@ -335,55 +344,108 @@ int WorkerManage :: empFind(int id, EmpNode **pre)
         EmpNode *p = this->m_EmpListHead;
         while (p->next != NULL)
         {
-            if(p->next->m_Emp->getId() == id)
+            if(p->next->m_Emp != NULL && p->next->m_Emp->getId() == id)
             {
-                *pre = p;
+                *S_pre = p;
                 return VALID_ID;
             }
             p = p->next;
         }
-        *pre = NULL;
+        *S_pre = NULL;
         return EMPTY_ID;
     }
 }
 
 // 重载根据名字返回职工节点的前一个节点
-int WorkerManage :: empFind(string name, EmpNode **pre)
+int WorkerManage :: empFind(string name, EmpNode **S_pre)
 {
     EmpNode *p = this->m_EmpListHead;
     while (p->next != NULL)
     {
-        if(p->next->m_Emp->getName() == name)
+        if(p->next->m_Emp != NULL && p->next->m_Emp->getName() == name)
         {
-            *pre = p;
+            *S_pre = p;
             return VALID_ID;
         }
         p = p->next;
     }
-    pre = NULL;
+    S_pre = NULL;
     return EMPTY_ID;
 }
 
 void WorkerManage :: deleteEmp()
 {
+    cout << endl;
     cout << "请输入需要删除的职工编号：" << endl;
     int id = 0;
     cin >> id;
     // 创建节点二级指针
     EmpNode *pre = NULL;
-    EmpNode **pre_2nd = &pre;
+    EmpNode **S_pre = &pre;
     // 调用可以返回节点的empFind函数
     // 若找到，则删除*pre->next节点
-    if( empFind(id, pre_2nd) == VALID_ID)
+    if( empFind(id, S_pre) == VALID_ID)
     {
         EmpNode *q = pre->next;
         pre->next = q->next;
         delete q;
         this->save();
+        cout << "删除成功" << endl;
     }
     // 否则给出提示
     else
     {
         cout << "输入职工编号不合法，或对应职工不存在" << endl;
     }
+}
+
+
+void WorkerManage :: modEmp()
+{
+    cout << endl;
+    // 提示输入要修改的职工id
+    cout << "请输入需要修改的职工编号： " << endl;
+    // 接收职工id
+    int id = 0;
+    cin >> id;
+    // 创建一级指针
+    EmpNode *pre = NULL;
+    // 创建二级指针并指向对应一级指针
+    EmpNode **S_pre = &pre;
+    // 调用通过职工id返回对应职工节点的前一个节点的empFind函数
+    if(empFind(id, S_pre) == VALID_ID)
+    {
+        // 把节点原来的信息释放掉
+        delete pre->next->m_Emp;
+        pre->next->m_Emp = NULL;
+        // 传入对应的职工节点，调用modEmpNode函数修改节点信息
+        cout << "请输入新的职工信息：" << endl;
+        this->modEmpNode(pre->next);
+        // 提示修改成功
+        cout << "修改成功" << endl;
+        // 保存到文件
+        this->save();
+    }
+    // 若没找到，给出提示
+    else
+    {
+        cout << "输入职工编号不合法，或对应职工不存在" << endl;
+        return;
+    }
+}
+
+
+void WorkerManage :: findEmp()
+{
+    // TODO
+}
+
+void WorkerManage :: sortEmp()
+{
+    // TODO
+}
+
+void WorkerManage :: cleanEmp()
+{
+    // TODO
 }

@@ -1,3 +1,3 @@
-4 pp 1
+1 angus 3
+2 pp 2
 3 bq 2
-2 angus 3

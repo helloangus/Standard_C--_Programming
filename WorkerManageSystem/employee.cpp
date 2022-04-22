@@ -13,7 +13,7 @@ void Employee :: showInfo()
 {
     cout << "员工编号：" << this->getId() << "\t";
     cout << "员工姓名：" << this->getName() << "\t";
-    cout << "部门编号：" << this->getDepName() << "\t";
+    cout << "岗位名称：" << this->getDepName() << "\t";
     cout << "岗位职责：完成经理交给的任务" << endl;
 }
 
