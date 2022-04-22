@@ -369,7 +369,7 @@ int WorkerManage :: empFind(string name, EmpNode **S_pre)
         }
         p = p->next;
     }
-    S_pre = NULL;
+    *S_pre = NULL;
     return EMPTY_ID;
 }
 
@@ -377,7 +377,7 @@ void WorkerManage :: deleteEmp()
 {
     cout << endl;
     cout << "请输入需要删除的职工编号：" << endl;
-    int id = 0;
+    int id;
     cin >> id;
     // 创建节点二级指针
     EmpNode *pre = NULL;
@@ -391,11 +391,13 @@ void WorkerManage :: deleteEmp()
         delete q;
         this->save();
         cout << "删除成功" << endl;
+        return;
     }
     // 否则给出提示
     else
     {
         cout << "输入职工编号不合法，或对应职工不存在" << endl;
+        return;
     }
 }
 
@@ -406,7 +408,7 @@ void WorkerManage :: modEmp()
     // 提示输入要修改的职工id
     cout << "请输入需要修改的职工编号： " << endl;
     // 接收职工id
-    int id = 0;
+    int id;
     cin >> id;
     // 创建一级指针
     EmpNode *pre = NULL;
@@ -425,6 +427,7 @@ void WorkerManage :: modEmp()
         cout << "修改成功" << endl;
         // 保存到文件
         this->save();
+        return;
     }
     // 若没找到，给出提示
     else
@@ -437,15 +440,71 @@ void WorkerManage :: modEmp()
 
 void WorkerManage :: findEmp()
 {
-    // TODO
+    cout << endl;
+    // 提示通过职工编号查找还是通过姓名查找
+    cout << "请选择查找方式：" << endl;
+    cout << "1、通过职工编号查找" << endl;
+    cout << "2、通过职工姓名查找" << endl;
+    // 创建对应一级、二级指针
+    EmpNode *pre = NULL;
+    EmpNode **S_pre = &pre;
+    // 若通过编号查找
+    int choice;
+    cin >> choice;
+    if(choice == 1)
+    {
+        cout << "请输入职工编号：" << endl;
+        int id;
+        cin >> id;
+        // 调用对应重载empFind
+        if(empFind(id, S_pre) == VALID_ID)
+        {
+            // 显示职工信息
+            pre->next->m_Emp->showInfo();
+            return;
+        }
+        else
+        {
+            cout << "输入职工编号非法，或对应职工不存在" << endl;
+            return;
+        }
+        
+    }
+    // 若通过姓名查找
+    else if(choice == 2)
+    {
+        cout << "请输入职工姓名：" << endl;
+        string name;
+        cin >> name;
+        // 调用对应重载empFind
+        if(empFind(name, S_pre) == VALID_ID)
+        {
+            // 显示职工信息
+            pre->next->m_Emp->showInfo();
+            return;
+        }
+        else
+        {
+            cout << "对应职工不存在" << endl;
+            return;
+        }
+        return;
+    }
+    else
+    {
+        cout << "查找方式错误" << endl;
+        return;
+    }
 }
 
 void WorkerManage :: sortEmp()
 {
+    cout << endl;
     // TODO
 }
 
 void WorkerManage :: cleanEmp()
 {
+    cout << endl;
     // TODO
 }
