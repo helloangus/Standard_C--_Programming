@@ -40,10 +40,12 @@ class WorkerManage
 
         void addEmp();
         void showEmp();
+        void deleteEmp();
 
         int getEmpNum();
-        int idFind(int);  // 根据输入职工ID查找链表，返回ID存在状态，可根据需要通过修改来返回找到的节点指针
-        int idFind(int, EmpNode *);   // 重载函数，根据输入职工ID查找链表，返回找到的节点指针
+        int empFind(int id);  // 根据输入职工ID查找链表，返回ID存在状态，可根据需要通过修改来返回找到的节点指针
+        int empFind(int id, EmpNode **pre);   // 重载函数，根据输入职工ID查找链表，通过修改返回找到节点的前一个节点指针
+        int empFind(string name, EmpNode **pre); // 重载函数，根据输入职工的名字查找链表，通过修改返回找到节点的前一个节点指针
 };
 
 

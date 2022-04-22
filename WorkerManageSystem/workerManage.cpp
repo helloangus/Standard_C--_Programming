@@ -80,9 +80,11 @@ void WorkerManage :: showMenu()
                 break;
             // 2、显示所有职工
             case 2:
+                this->showEmp();
                 break;
             // 3、删除指定职工
             case 3:
+                this->deleteEmp();
                 break;
             // 4、修改职工信息
             case 4:
@@ -101,6 +103,7 @@ void WorkerManage :: showMenu()
                 cout << "输入错误，请重新输入" << endl;
                 break;
         }
+        cout << endl;
     }
 }
 
@@ -146,20 +149,20 @@ void WorkerManage :: addEmp()
             {
                 cout << "请输入第 " << i+1 << " 个新职工编号：" << endl;
                 cin >> id;
-                if (this->idFind(id) == INVALID_ID)
+                if (this->empFind(id) == INVALID_ID)
                 {
                     cout << "职工编号不合法，请重新输入" << endl;
                     // 考虑cin的内容若为字符型，无法存入id，则需要重置缓冲区
                     cin.clear();
                     cin.ignore();
                 }
-                else if(this->idFind(id) == VALID_ID)
+                else if(this->empFind(id) == VALID_ID)
                 {
                     cout << "职工编号已存在，请重新输入" << endl;
                     cin.clear();
                     cin.ignore();
                 }
-                else if(this->idFind(id) == EMPTY_ID)
+                else if(this->empFind(id) == EMPTY_ID)
                 {
                     break;
                 }
@@ -297,7 +300,7 @@ void WorkerManage :: release()
 }
 
 
-int WorkerManage :: idFind(int id)
+int WorkerManage :: empFind(int id)
 {
     if(id <= 0)
     {
@@ -319,11 +322,12 @@ int WorkerManage :: idFind(int id)
 }
 
 
-// 重载根据ID返回职工节点
-int WorkerManage :: idFind(int id, EmpNode *q)
+// 重载根据ID返回职工节点的前一个节点
+int WorkerManage :: empFind(int id, EmpNode **pre)
 {
     if(id <= 0)
     {
+        *pre = NULL;
         return INVALID_ID;
     }
     else
@@ -331,13 +335,55 @@ int WorkerManage :: idFind(int id, EmpNode *q)
         EmpNode *p = this->m_EmpListHead;
         while (p->next != NULL)
         {
-            if(p->m_Emp->getId() == id)
+            if(p->next->m_Emp->getId() == id)
             {
-                q = p;
+                *pre = p;
                 return VALID_ID;
             }
             p = p->next;
         }
+        *pre = NULL;
         return EMPTY_ID;
+    }
+}
+
+// 重载根据名字返回职工节点的前一个节点
+int WorkerManage :: empFind(string name, EmpNode **pre)
+{
+    EmpNode *p = this->m_EmpListHead;
+    while (p->next != NULL)
+    {
+        if(p->next->m_Emp->getName() == name)
+        {
+            *pre = p;
+            return VALID_ID;
+        }
+        p = p->next;
+    }
+    pre = NULL;
+    return EMPTY_ID;
+}
+
+void WorkerManage :: deleteEmp()
+{
+    cout << "请输入需要删除的职工编号：" << endl;
+    int id = 0;
+    cin >> id;
+    // 创建节点二级指针
+    EmpNode *pre = NULL;
+    EmpNode **pre_2nd = &pre;
+    // 调用可以返回节点的empFind函数
+    // 若找到，则删除*pre->next节点
+    if( empFind(id, pre_2nd) == VALID_ID)
+    {
+        EmpNode *q = pre->next;
+        pre->next = q->next;
+        delete q;
+        this->save();
+    }
+    // 否则给出提示
+    else
+    {
+        cout << "输入职工编号不合法，或对应职工不存在" << endl;
     }
 }
