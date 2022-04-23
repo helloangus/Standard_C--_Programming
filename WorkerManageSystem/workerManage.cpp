@@ -534,7 +534,105 @@ void WorkerManage :: sortEmp()
     }
     else
     {
-        // TODO
+        /*
+        综合考虑单链表的数据结构实现方法以及空间使用，决定使用简单选择排序法
+        使用链表的头插法，依次找到最大值插入表头后
+        */
+
+        // 提示选择升序排序还是降序排序
+        cout << "请选择排序方式：" << endl;
+        cout << "1、升序" << endl;
+        cout << "2、降序" << endl;
+
+        int choice;
+        cin >> choice;
+        // 若为升序
+        if(choice == 1)
+        {
+            // 声明三个结点指针，p用于跟踪全局最大值，即参与本次排序的第一个节点的上一个节点，q用于跟踪正在参与比较的节点的上一个节点，max用于跟踪当前最大值节点的上一个节点
+            EmpNode *p, *q, *max;
+            // p，max，q初始化为头节点
+            p = this->m_EmpListHead;
+            // 外层循环，退出循环的条件是p->next为空
+            while(p->next != NULL)
+            {
+                q = p;
+                max = q;
+                // 从最少1个节点开始考虑，当q->next不为空时继续循环
+                while(q->next != NULL)
+                {
+                    // 比较max->next与q->next中职工编号的大小
+                    // max继续跟踪大的上一个节点
+                    if(max->next->m_Emp->getId() < q->next->m_Emp->getId())
+                    {
+                        max = q;
+                    }
+                    else
+                    {}
+                    // q向后移动
+                    q = q->next;
+                }
+                // 此时q->next已经走到链尾，max->next指向本趟排序最大节点
+                // 将max->next插入到头节点的下一个节点
+                EmpNode *tmp = max->next;
+                max->next = tmp->next;
+                tmp->next = this->m_EmpListHead->next;
+                this->m_EmpListHead->next = tmp;
+                // 第一次外层循环的max->next指向的节点即全局最大值，用static global_max去跟踪，再赋值给p
+                static EmpNode *global_max = tmp;
+                p = global_max;
+            }
+            // 返回
+            cout << "升序排序完成" << endl;
+            return;
+        }
+        // 若为降序
+        else if(choice == 2)
+        {
+            // 声明三个结点指针，p用于跟踪全局最小值，即参与本次排序的第一个节点的上一个节点，q用于跟踪正在参与比较的节点的上一个节点，min用于跟踪当前最小值节点的上一个节点
+            EmpNode *p, *q, *min;
+            // p，min，q初始化为头节点
+            p = this->m_EmpListHead;
+            // 外层循环，退出循环的条件是p->next为空
+            while(p->next != NULL)
+            {
+                q = p;
+                min = q;
+                // 从最少1个节点开始考虑，当q->next不为空时继续循环
+                while(q->next != NULL)
+                {
+                    // 比较min->next与q->next中职工编号的大小
+                    // min继续跟踪小的上一个节点
+                    if(min->next->m_Emp->getId() > q->next->m_Emp->getId())
+                    {
+                        min = q;
+                    }
+                    else
+                    {}
+                    // q向后移动
+                    q = q->next;
+                }
+                // 此时q->next已经走到链尾，min->next指向本趟排序最大节点
+                // 将min->next插入到头节点的下一个节点
+                EmpNode *tmp = min->next;
+                min->next = tmp->next;
+                tmp->next = this->m_EmpListHead->next;
+                this->m_EmpListHead->next = tmp;
+                // 第一次外层循环的min->next指向的节点即全局最小值，用static global_min去跟踪，再赋值给p
+                static EmpNode *global_min = tmp;
+                p = global_min;
+            }
+            // 返回
+            cout << "降序排序完成" << endl;
+            return;
+        }
+        // 否则提示排序方式输入错误
+        else
+        {
+            // 返回
+            cout << "排序方式输入错误" << endl;
+            return;
+        }
     }
 }
 
